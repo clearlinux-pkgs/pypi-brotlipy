@@ -6,7 +6,7 @@
 #
 Name     : pypi-brotlipy
 Version  : 0.7.0
-Release  : 38
+Release  : 39
 URL      : https://files.pythonhosted.org/packages/d9/91/bc79b88590e4f662bd40a55a2b6beb0f15da4726732efec5aa5a3763d856/brotlipy-0.7.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/d9/91/bc79b88590e4f662bd40a55a2b6beb0f15da4726732efec5aa5a3763d856/brotlipy-0.7.0.tar.gz
 Source1  : https://files.pythonhosted.org/packages/d9/91/bc79b88590e4f662bd40a55a2b6beb0f15da4726732efec5aa5a3763d856/brotlipy-0.7.0.tar.gz.asc
@@ -20,6 +20,9 @@ Requires: pypi-brotlipy-python = %{version}-%{release}
 Requires: pypi-brotlipy-python3 = %{version}-%{release}
 BuildRequires : buildreq-distutils3
 BuildRequires : pypi(cffi)
+# Suppress stripping binaries
+%define __strip /bin/true
+%define debug_package %{nil}
 
 %description
 ========
@@ -87,12 +90,12 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1656362679
+export SOURCE_DATE_EPOCH=1672260953
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -fno-lto "
-export FCFLAGS="$FFLAGS -fno-lto "
-export FFLAGS="$FFLAGS -fno-lto "
-export CXXFLAGS="$CXXFLAGS -fno-lto "
+export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
 export MAKEFLAGS=%{?_smp_mflags}
 python3 setup.py build
 
@@ -109,8 +112,8 @@ popd
 export MAKEFLAGS=%{?_smp_mflags}
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/pypi-brotlipy
-cp %{_builddir}/brotlipy-0.7.0/LICENSE %{buildroot}/usr/share/package-licenses/pypi-brotlipy/bae61d713726c8dbf4b43a6bf0ddeb04e1f927cd
-cp %{_builddir}/brotlipy-0.7.0/libbrotli/LICENSE %{buildroot}/usr/share/package-licenses/pypi-brotlipy/c045813a6c514f2d30d60a07c6aaf3603850e608
+cp %{_builddir}/brotlipy-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/pypi-brotlipy/bae61d713726c8dbf4b43a6bf0ddeb04e1f927cd || :
+cp %{_builddir}/brotlipy-%{version}/libbrotli/LICENSE %{buildroot}/usr/share/package-licenses/pypi-brotlipy/c045813a6c514f2d30d60a07c6aaf3603850e608 || :
 python3 -tt setup.py build  install --root=%{buildroot}
 echo ----[ mark ]----
 cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
